@@ -8,8 +8,8 @@
   <arg name="cmd_vel" default="/$(arg robot_name_0)/mobile_base_controller/cmd_vel"/>
   <arg name="world" default="small_house1"/>
   <arg name="scan_topic"  default="/armbot_laser_scanner/laser/scan" />
-  <arg name="base_frame"  default="base_link"/>
-  <arg name="odom_frame"  default="odom"/>
+  <arg name="base_frame"  default="/base_link"/>
+  <arg name="odom_frame"  default="/odom"/>
 
   
   <!-- start Gazebo with an empty world -->
@@ -97,7 +97,7 @@
   <!-- </group> -->
 
   <!-- RViz -->
-  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find armbot_nav)/rviz/armbot_nav.rviz" />
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find armbot_nav)/rviz/armbot_customized_nav.rviz" />
 
   <!--Setup manual control through GUI -->
   <param name="/cmd_vel"
