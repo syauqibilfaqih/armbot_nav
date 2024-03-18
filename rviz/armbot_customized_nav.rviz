@@ -98,7 +98,7 @@ Visualization Manager:
           Value: true
       Name: RobotModel
       Robot Description: /armbot0/robot_description
-      TF Prefix: ""
+      TF Prefix: armbot0
       Update Interval: 0
       Value: true
       Visual Enabled: true
