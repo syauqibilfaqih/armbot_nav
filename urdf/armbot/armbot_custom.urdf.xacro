@@ -145,11 +145,11 @@
       <rightRearJoint>back_right_wheel_joint</rightRearJoint>
       <wheelSeparation>0.264</wheelSeparation>
       <wheelDiameter>${wheel_radius}*2</wheelDiameter>
-      <robotBaseFrame>base_link</robotBaseFrame>
+      <robotBaseFrame>$(arg botname)/base_link</robotBaseFrame>
       <torque>20</torque>
       <commandTopic>mobile_base_controller/cmd_vel</commandTopic>
       <odometryTopic>mobile_base_controller/odom</odometryTopic>
-      <odometryFrame>odom</odometryFrame>
+      <odometryFrame>$(arg botname)/odom</odometryFrame>
       <covariance_x>100.0</covariance_x>
       <covariance_y>100.0</covariance_y>
       <covariance_yaw>100.0</covariance_yaw>
