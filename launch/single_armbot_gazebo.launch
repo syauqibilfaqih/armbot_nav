@@ -11,7 +11,7 @@
   <!-- <arg name="base_frame"  default="/base_link"/>
   <arg name="odom_frame"  default="/odom"/> -->
   <arg name="base_frame"  default="/$(arg robot_name_0)/base_link"/>
-  <arg name="odom_frame"  default="/odom"/>
+  <arg name="odom_frame"  default="/$(arg robot_name_0)/odom"/>
   
   <!-- start Gazebo with an empty world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -32,7 +32,7 @@
 
     <!--Spawns Controller inside a Gazebo simulation -->
     <rosparam command="load"
-              file="$(find armbot_nav)/config/manual_drive_$(arg robot_name_0).yaml"/>
+              file="$(find armbot_nav)/config/multi/manual_drive_$(arg robot_name_0).yaml"/>
     <node name="armbot_controller_spawner" pkg="controller_manager" type="spawner"
       ns="/$(arg robot_name_0)" args="joint_state_controller"/>
     <!-- <node name="armbot_controller_spawner" pkg="controller_manager" type="spawner"
@@ -43,6 +43,7 @@
       <param name="publish_frequency" type="double" value="30.0" />
       <remap from="/joint_states" to="/$(arg robot_name_0)/joint_states"/>
       <remap from="/robot_description" to="/$(arg robot_name_0)/robot_description" />
+      <param name="tf_prefix" value="$(arg robot_name_0)" />
     </node>
 
 
@@ -51,6 +52,7 @@
             <remap from="scan" to="$(arg scan_topic)"/>
             <param name="base_frame" value="$(arg base_frame)"/>
             <param name="odom_frame" value="$(arg odom_frame)"/>
+            <param name="map_frame"  value="$(arg robot_name_0)/map"/>
             
             <param name="map_update_interval" value="2.0"/>        
             <param name="maxUrange" value="50.0"/>
@@ -84,26 +86,25 @@
             <param name="minimumScore" value="0.005"/>        
     </node>
 
-    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" ns="/$(arg robot_name_0)" output="screen">
             <!-- <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/> -->
-            <!-- <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>        
-            <rosparam file="$(find armbot_nav)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
-            <rosparam file="$(find armbot_nav)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
-            <rosparam file="$(find armbot_nav)/config/local_costmap_params.yaml" command="load" />
-            <rosparam file="$(find armbot_nav)/config/global_costmap_params.yaml" command="load" /> 
-            <rosparam file="$(find armbot_nav)/config/base_local_planner_params.yaml" command="load" />
-            <remap from="/cmd_vel" to="/$(arg robot_name_0)/mobile_base_controller/cmd_vel"/>
-            <remap from="/odom" to="/$(arg robot_name_0)/mobile_base_controller/odom"/> -->
             <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>        
-            <rosparam file="$(find armbot_nav)/config/costmap_common_params_armbot.yaml" command="load" ns="global_costmap" /> 
-            <rosparam file="$(find armbot_nav)/config/costmap_common_params_armbot.yaml" command="load" ns="local_costmap" />
-            <rosparam file="$(find armbot_nav)/config/local_costmap_params_$(arg robot_name_0).yaml" command="load" />
-            <rosparam file="$(find armbot_nav)/config/global_costmap_params_$(arg robot_name_0).yaml" command="load" /> 
-            <rosparam file="$(find armbot_nav)/config/base_local_planner_params_$(arg robot_name_0).yaml" command="load" />
+            <rosparam file="$(find armbot_nav)/config/multi/costmap_common_params_armbot.yaml" command="load" ns="global_costmap" /> 
+            <rosparam file="$(find armbot_nav)/config/multi/costmap_common_params_armbot.yaml" command="load" ns="local_costmap" />
+            <rosparam file="$(find armbot_nav)/config/multi/local_costmap_params_$(arg robot_name_0).yaml" command="load" />
+            <rosparam file="$(find armbot_nav)/config/multi/global_costmap_params_$(arg robot_name_0).yaml" command="load" /> 
+            <rosparam file="$(find armbot_nav)/config/multi/base_local_planner_params_$(arg robot_name_0).yaml" command="load" />
             <remap from="/cmd_vel" to="/$(arg robot_name_0)/mobile_base_controller/cmd_vel"/>
-            <remap from="/odom" to="/$(arg robot_name_0)/mobile_base_controller/odom"/>
+            <!-- <remap from="/odom" to="/$(arg robot_name_0)/mobile_base_controller/odom"/> -->
+            <remap from="scan" to="$(arg scan_topic)"/>
+            <param name="base_frame" value="$(arg base_frame)"/>
+            <param name="odom_frame" value="$(arg odom_frame)"/>
+            <param name="map_frame"  value="$(arg robot_name_0)/map"/>
     </node>
   <!-- </group> -->
+
+  <node pkg="tf" type="static_transform_publisher" name="world_to_mergedmap_tf_broadcaster"  args="0.385 0.385 0 0 0 0 world map 20"/>
+  <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg robot_name_0)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg robot_name_0)/map 20"/>
 
   <!-- RViz -->
   <node type="rviz" name="rviz" pkg="rviz" args="-d $(find armbot_nav)/rviz/armbot_customized_nav.rviz" />
