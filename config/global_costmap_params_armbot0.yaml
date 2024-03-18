@@ -1,5 +1,5 @@
 global_costmap:
-  global_frame: armbot0/map
+  global_frame: map
   rolling_window: true # true required for rrt_exploration
   width: 100.0
   height: 100.0
@@ -11,3 +11,6 @@ global_costmap:
     - {name: static_layer, type: "costmap_2d::StaticLayer"}
     - {name: obstacle_layer, type: "costmap_2d::VoxelLayer"}
     - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
+  obstacle_layer:
+    observation_sources: laser_scan_sensor
+    laser_scan_sensor: {sensor_frame: armbot0/armbot_laser_scanner, data_type: LaserScan, topic: /armbot0/armbot_laser_scanner/laser/scan, marking: true, clearing: true}
