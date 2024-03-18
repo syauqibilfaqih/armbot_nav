@@ -1,0 +1,17 @@
+local_costmap:
+  width: 3
+  height: 3
+  origin_x: -1.5
+  origin_y: -1.5
+  global_frame: armbot0/odom
+  robot_base_frame: armbot0/base_link
+  resolution: 0.01
+  rolling_window: true
+  inflation_layer:
+    inflation_radius: 1.0
+  plugins:
+    - {name: obstacle_layer, type: "costmap_2d::VoxelLayer"}
+    - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
+  obstacle_layer:
+    observation_sources: laser_scan_sensor
+    laser_scan_sensor: {sensor_frame: armbot0/armbot_laser_scanner, data_type: LaserScan, topic: /armbot0/armbot_laser_scanner/laser/scan, marking: true, clearing: true}
