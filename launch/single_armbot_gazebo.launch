@@ -95,7 +95,9 @@
             <rosparam file="$(find armbot_nav)/config/multi/global_costmap_params_$(arg robot_name_0).yaml" command="load" /> 
             <rosparam file="$(find armbot_nav)/config/multi/base_local_planner_params_$(arg robot_name_0).yaml" command="load" />
             <remap from="/cmd_vel" to="/$(arg robot_name_0)/mobile_base_controller/cmd_vel"/>
-            <remap from="scan" to="$(arg scan_topic)"/>
+            <remap from="robot_base_frame" to="$(arg robot_name_0)/base_link"/>
+            <remap from="/map" to="$(arg robot_name_0)/map"/>
+            <!-- <remap from="scan" to="$(arg scan_topic)"/> -->
             <!-- <param name="base_frame" value="$(arg base_frame)"/> -->
             <!-- <param name="odom_frame" value="$(arg odom_frame)"/> -->
             <!-- <param name="map_frame"  value="$(arg robot_name_0)/map"/> -->
