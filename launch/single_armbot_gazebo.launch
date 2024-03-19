@@ -85,7 +85,7 @@
             <param name="lasamplestep" value="0.005"/>
             <param name="minimumScore" value="0.005"/>        
     </node>
-
+    
     <node pkg="move_base" type="move_base" respawn="false" name="move_base" ns="$(arg robot_name_0)" output="screen">
             <!-- <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS"/> -->
             <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>        
@@ -97,10 +97,6 @@
             <remap from="/cmd_vel" to="/$(arg robot_name_0)/mobile_base_controller/cmd_vel"/>
             <remap from="robot_base_frame" to="$(arg robot_name_0)/base_link"/>
             <remap from="/map" to="$(arg robot_name_0)/map"/>
-            <!-- <remap from="scan" to="$(arg scan_topic)"/> -->
-            <!-- <param name="base_frame" value="$(arg base_frame)"/> -->
-            <!-- <param name="odom_frame" value="$(arg odom_frame)"/> -->
-            <!-- <param name="map_frame"  value="$(arg robot_name_0)/map"/> -->
     </node>
   <!-- </group> -->
 
