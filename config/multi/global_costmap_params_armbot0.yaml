@@ -1,5 +1,6 @@
 global_costmap:
   global_frame: map
+  robot_base_frame: armbot0/base_link
   rolling_window: true # true required for rrt_exploration
   width: 100.0
   height: 100.0
@@ -11,3 +12,16 @@ global_costmap:
     - {name: static_layer, type: "costmap_2d::StaticLayer"}
     - {name: obstacle_layer, type: "costmap_2d::VoxelLayer"}
     - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
+  static_layer:
+    enabled:              true
+    map_topic:            "/armbot0/map"
+    subscribe_to_updates: true
+  obstacle_layer:
+    enabled: true
+    track_unknown_space: true
+    combination_method: 1
+    #The cost at which a cell is considered an obstacle when a map is read from the map_server
+    lethal_cost_threshold: 100
+    
+    observation_sources: scan
+    scan: {sensor_frame: armbot0/armbot_laser_scanner, data_type: LaserScan, topic: /armbot0/armbot_laser_scanner/laser/scan, marking: true, clearing: true, obstacle_range: 3.0, raytrace_range: 4.0}
