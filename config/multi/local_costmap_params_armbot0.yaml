@@ -3,7 +3,8 @@ local_costmap:
   height: 3
   origin_x: -1.5
   origin_y: -1.5
-  global_frame: armbot0/map
+  global_frame: armbot0/odom
+  robot_base_frame: armbot0/base_link
   resolution: 0.01
   rolling_window: true
   inflation_layer:
@@ -11,3 +12,12 @@ local_costmap:
   plugins:
     - {name: obstacle_layer, type: "costmap_2d::VoxelLayer"}
     - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
+  obstacle_layer:
+    enabled: true
+    track_unknown_space: true
+    combination_method: 1
+    #The cost at which a cell is considered an obstacle when a map is read from the map_server
+    lethal_cost_threshold: 100
+    
+    observation_sources: scan
+    scan: {sensor_frame: armbot0/armbot_laser_scanner, data_type: LaserScan, topic: /armbot0/armbot_laser_scanner/laser/scan, marking: true, clearing: true, obstacle_range: 3.0, raytrace_range: 4.0}
