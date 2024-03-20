@@ -5,6 +5,8 @@ planner_patience: 1.0
 controller_patience: 1.0 
 
 TrajectoryPlannerROS:
+  odom_topic: odom
+  map_frame: armbot0/map
   max_vel_x: 0.15
   min_vel_x: 0.05
   max_vel_theta: 0.7
