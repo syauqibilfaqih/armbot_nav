@@ -1,0 +1,293 @@
+<launch>
+  <env name="GAZEBO_RESOURCE_PATH" value="$(find armbot_nav)/meshes"/>
+
+  <!-- Arguments -->
+  <arg name="robot_name" value="armbot"/>
+  <arg name="robot_name_0" value="armbot0"/>
+  <arg name="robot_name_1" value="armbot1"/>
+  <arg name="robot_name_2" value="armbot2"/>
+
+  <arg name="model" default="$(find armbot_nav)/urdf/armbot/armbot_custom.urdf.xacro"/>
+
+  <arg name="cmd_vel_0" default="/$(arg robot_name_0)/mobile_base_controller/cmd_vel"/>
+  <arg name="cmd_vel_1" default="/$(arg robot_name_1)/mobile_base_controller/cmd_vel"/>
+  <arg name="cmd_vel_2" default="/$(arg robot_name_2)/mobile_base_controller/cmd_vel"/>
+
+  <arg name="world" default="small_house1"/>
+
+  <arg name="scan_topic_0"  default="/$(arg robot_name_0)/armbot_laser_scanner/laser/scan" />
+  <arg name="scan_topic_1"  default="/$(arg robot_name_1)/armbot_laser_scanner/laser/scan" />
+  <arg name="scan_topic_2"  default="/$(arg robot_name_2)/armbot_laser_scanner/laser/scan" />
+
+  <arg name="base_frame_0"  default="/$(arg robot_name_0)/base_link"/>
+  <arg name="base_frame_1"  default="/$(arg robot_name_1)/base_link"/>
+  <arg name="base_frame_2"  default="/$(arg robot_name_2)/base_link"/>
+
+  <arg name="odom_frame_0"  default="/$(arg robot_name_0)/odom"/>
+  <arg name="odom_frame_1"  default="/$(arg robot_name_1)/odom"/>
+  <arg name="odom_frame_2"  default="/$(arg robot_name_2)/odom"/>
+  
+  <!-- start Gazebo with an empty world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="use_sim_time" value="true"/>
+    <arg name="debug" value="false"/>
+    <arg name="verbose" value="false"/>
+    <arg name="world_name" value="$(find armbot_nav)/worlds/$(arg world).world"/>
+  </include>
+
+  <!-- armbot0 -->
+  <!-- <group ns = "$(arg robot_name)"> -->
+    <!--Spawns Robot inside a Gazebo simulation -->
+    <param name="/$(arg robot_name_0)/robot_description"
+          command="xacro $(arg model) botname:=$(arg robot_name_0)"/>
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_$(arg robot_name_0)" 
+          args="-x 0.0 -y 0.5 -z 0.1 -unpause -urdf -param /$(arg robot_name_0)/robot_description -model $(arg robot_name_0)" respawn="false">
+    </node>
+
+    <!--Spawns Controller inside a Gazebo simulation -->
+    <rosparam command="load"
+              file="$(find armbot_nav)/config/multi/manual_drive_$(arg robot_name_0).yaml"/>
+    <node name="armbot_controller_spawner" pkg="controller_manager" type="spawner"
+      ns="/$(arg robot_name_0)" args="joint_state_controller"/>
+    <!-- <node name="armbot_controller_spawner" pkg="controller_manager" type="spawner"
+      ns="/armbot" args="joint_state_controller mobile_base_controller"/> -->
+
+    <!--Setup TF -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" ns="/$(arg robot_name_0)">
+      <param name="publish_frequency" type="double" value="30.0" />
+      <remap from="/joint_states" to="/$(arg robot_name_0)/joint_states"/>
+      <remap from="/robot_description" to="/$(arg robot_name_0)/robot_description" />
+      <param name="tf_prefix" value="$(arg robot_name_0)" />
+    </node>
+
+    <!--Setup manual control through GUI -->
+    <!-- <param name="/cmd_vel"
+        value="$(arg cmd_vel)"/> -->
+
+
+    <!-- Run Gmapping --> 
+    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" ns="$(arg robot_name_0)" output="screen">
+            <remap from="scan" to="$(arg scan_topic_0)"/>
+            <param name="base_frame" value="$(arg base_frame_0)"/>
+            <param name="odom_frame" value="$(arg odom_frame_0)"/>
+            <param name="map_frame"  value="$(arg robot_name_0)/map"/>
+            
+            <param name="map_update_interval" value="2.0"/>        
+            <param name="maxUrange" value="50.0"/>
+            <param name="maxRange" value="50.0"/>
+            <param name="sigma" value="0.05"/>
+            <param name="kernelSize" value="1"/>
+            <param name="lstep" value="0.05"/>
+            <param name="astep" value="0.05"/>
+            <param name="iterations" value="5"/>
+            <param name="lsigma" value="0.075"/>
+            <param name="ogain" value="3.0"/>
+            <param name="lskip" value="0"/>
+            <param name="srr" value="0.01"/>
+            <param name="srt" value="0.02"/>
+            <param name="str" value="0.01"/>
+            <param name="stt" value="0.02"/>
+            <param name="linearUpdate" value="0.01"/>
+            <param name="angularUpdate" value="0.01"/>
+            <param name="temporalUpdate" value="0.1"/>
+            <param name="resampleThreshold" value="0.5"/>
+            <param name="particles" value="30"/>
+            <param name="xmin" value="-5.0"/>
+            <param name="ymin" value="-5.0"/>
+            <param name="xmax" value="5.0"/>
+            <param name="ymax" value="5.0"/>
+            <param name="delta" value="0.1"/>
+            <param name="llsamplerange" value="0.01"/>
+            <param name="llsamplestep" value="0.01"/>
+            <param name="lasamplerange" value="0.005"/>
+            <param name="lasamplestep" value="0.005"/>
+            <param name="minimumScore" value="0.005"/>        
+    </node>
+    
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" ns="$(arg robot_name_0)" output="screen">
+            <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>        
+            <rosparam file="$(find armbot_nav)/config/multi/costmap_common_params_armbot.yaml" command="load" ns="global_costmap" /> 
+            <rosparam file="$(find armbot_nav)/config/multi/costmap_common_params_armbot.yaml" command="load" ns="local_costmap" />
+            <rosparam file="$(find armbot_nav)/config/multi/local_costmap_params_$(arg robot_name_0).yaml" command="load" />
+            <rosparam file="$(find armbot_nav)/config/multi/global_costmap_params_$(arg robot_name_0).yaml" command="load" /> 
+            <rosparam file="$(find armbot_nav)/config/multi/base_local_planner_params_$(arg robot_name_0).yaml" command="load" />
+            <remap from="cmd_vel" to="/$(arg robot_name_0)/mobile_base_controller/cmd_vel"/>
+            <remap from="robot_base_frame" to="$(arg robot_name_0)/base_link"/>
+    </node>
+  <!-- </group> -->
+
+   <!-- armbot1 -->
+  <!-- <group ns = "$(arg robot_name)"> -->
+    <!--Spawns Robot inside a Gazebo simulation -->
+    <param name="/$(arg robot_name_1)/robot_description"
+          command="xacro $(arg model) botname:=$(arg robot_name_1)"/>
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_$(arg robot_name_1)" 
+          args="-x 6.0 -y -1.0 -z 0.1 -unpause -urdf -param /$(arg robot_name_1)/robot_description -model $(arg robot_name_1)" respawn="false">
+    </node>
+
+    <!--Spawns Controller inside a Gazebo simulation -->
+    <rosparam command="load"
+              file="$(find armbot_nav)/config/multi/manual_drive_$(arg robot_name_1).yaml"/>
+    <node name="armbot_controller_spawner" pkg="controller_manager" type="spawner"
+      ns="/$(arg robot_name_1)" args="joint_state_controller"/>
+    <!-- <node name="armbot_controller_spawner" pkg="controller_manager" type="spawner"
+      ns="/armbot" args="joint_state_controller mobile_base_controller"/> -->
+
+    <!--Setup TF -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" ns="/$(arg robot_name_1)">
+      <param name="publish_frequency" type="double" value="30.0" />
+      <remap from="/joint_states" to="/$(arg robot_name_1)/joint_states"/>
+      <remap from="/robot_description" to="/$(arg robot_name_1)/robot_description" />
+      <param name="tf_prefix" value="$(arg robot_name_1)" />
+    </node>
+
+    <!--Setup manual control through GUI -->
+    <!-- <param name="/cmd_vel"
+        value="$(arg cmd_vel)"/> -->
+
+
+    <!-- Run Gmapping --> 
+    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" ns="$(arg robot_name_1)" output="screen">
+            <remap from="scan" to="$(arg scan_topic_1)"/>
+            <param name="base_frame" value="$(arg base_frame_1)"/>
+            <param name="odom_frame" value="$(arg odom_frame_1)"/>
+            <param name="map_frame"  value="$(arg robot_name_1)/map"/>
+            
+            <param name="map_update_interval" value="2.0"/>        
+            <param name="maxUrange" value="50.0"/>
+            <param name="maxRange" value="50.0"/>
+            <param name="sigma" value="0.05"/>
+            <param name="kernelSize" value="1"/>
+            <param name="lstep" value="0.05"/>
+            <param name="astep" value="0.05"/>
+            <param name="iterations" value="5"/>
+            <param name="lsigma" value="0.075"/>
+            <param name="ogain" value="3.0"/>
+            <param name="lskip" value="0"/>
+            <param name="srr" value="0.01"/>
+            <param name="srt" value="0.02"/>
+            <param name="str" value="0.01"/>
+            <param name="stt" value="0.02"/>
+            <param name="linearUpdate" value="0.01"/>
+            <param name="angularUpdate" value="0.01"/>
+            <param name="temporalUpdate" value="0.1"/>
+            <param name="resampleThreshold" value="0.5"/>
+            <param name="particles" value="30"/>
+            <param name="xmin" value="-5.0"/>
+            <param name="ymin" value="-5.0"/>
+            <param name="xmax" value="5.0"/>
+            <param name="ymax" value="5.0"/>
+            <param name="delta" value="0.1"/>
+            <param name="llsamplerange" value="0.01"/>
+            <param name="llsamplestep" value="0.01"/>
+            <param name="lasamplerange" value="0.005"/>
+            <param name="lasamplestep" value="0.005"/>
+            <param name="minimumScore" value="0.005"/>        
+    </node>
+    
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" ns="$(arg robot_name_1)" output="screen">
+            <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>        
+            <rosparam file="$(find armbot_nav)/config/multi/costmap_common_params_armbot.yaml" command="load" ns="global_costmap" /> 
+            <rosparam file="$(find armbot_nav)/config/multi/costmap_common_params_armbot.yaml" command="load" ns="local_costmap" />
+            <rosparam file="$(find armbot_nav)/config/multi/local_costmap_params_$(arg robot_name_1).yaml" command="load" />
+            <rosparam file="$(find armbot_nav)/config/multi/global_costmap_params_$(arg robot_name_1).yaml" command="load" /> 
+            <rosparam file="$(find armbot_nav)/config/multi/base_local_planner_params_$(arg robot_name_1).yaml" command="load" />
+            <remap from="cmd_vel" to="/$(arg robot_name_1)/mobile_base_controller/cmd_vel"/>
+            <remap from="robot_base_frame" to="$(arg robot_name_1)/base_link"/>
+    </node>
+  <!-- </group> -->
+
+   <!-- armbot2 -->
+  <!-- <group ns = "$(arg robot_name)"> -->
+    <!--Spawns Robot inside a Gazebo simulation -->
+    <param name="/$(arg robot_name_2)/robot_description"
+          command="xacro $(arg model) botname:=$(arg robot_name_2)"/>
+    <node pkg="gazebo_ros" type="spawn_model" name="spawn_$(arg robot_name_2)" 
+          args="-x -6.5 -y -1.0 -z 0.1 -unpause -urdf -param /$(arg robot_name_2)/robot_description -model $(arg robot_name_2)" respawn="false">
+    </node>
+
+    <!--Spawns Controller inside a Gazebo simulation -->
+    <rosparam command="load"
+              file="$(find armbot_nav)/config/multi/manual_drive_$(arg robot_name_2).yaml"/>
+    <node name="armbot_controller_spawner" pkg="controller_manager" type="spawner"
+      ns="/$(arg robot_name_2)" args="joint_state_controller"/>
+    <!-- <node name="armbot_controller_spawner" pkg="controller_manager" type="spawner"
+      ns="/armbot" args="joint_state_controller mobile_base_controller"/> -->
+
+    <!--Setup TF -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher" ns="/$(arg robot_name_2)">
+      <param name="publish_frequency" type="double" value="30.0" />
+      <remap from="/joint_states" to="/$(arg robot_name_2)/joint_states"/>
+      <remap from="/robot_description" to="/$(arg robot_name_2)/robot_description" />
+      <param name="tf_prefix" value="$(arg robot_name_2)" />
+    </node>
+
+    <!--Setup manual control through GUI -->
+    <!-- <param name="/cmd_vel"
+        value="$(arg cmd_vel)"/> -->
+
+
+    <!-- Run Gmapping --> 
+    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" ns="$(arg robot_name_2)" output="screen">
+            <remap from="scan" to="$(arg scan_topic_2)"/>
+            <param name="base_frame" value="$(arg base_frame_2)"/>
+            <param name="odom_frame" value="$(arg odom_frame_2)"/>
+            <param name="map_frame"  value="$(arg robot_name_2)/map"/>
+            
+            <param name="map_update_interval" value="2.0"/>        
+            <param name="maxUrange" value="50.0"/>
+            <param name="maxRange" value="50.0"/>
+            <param name="sigma" value="0.05"/>
+            <param name="kernelSize" value="1"/>
+            <param name="lstep" value="0.05"/>
+            <param name="astep" value="0.05"/>
+            <param name="iterations" value="5"/>
+            <param name="lsigma" value="0.075"/>
+            <param name="ogain" value="3.0"/>
+            <param name="lskip" value="0"/>
+            <param name="srr" value="0.01"/>
+            <param name="srt" value="0.02"/>
+            <param name="str" value="0.01"/>
+            <param name="stt" value="0.02"/>
+            <param name="linearUpdate" value="0.01"/>
+            <param name="angularUpdate" value="0.01"/>
+            <param name="temporalUpdate" value="0.1"/>
+            <param name="resampleThreshold" value="0.5"/>
+            <param name="particles" value="30"/>
+            <param name="xmin" value="-5.0"/>
+            <param name="ymin" value="-5.0"/>
+            <param name="xmax" value="5.0"/>
+            <param name="ymax" value="5.0"/>
+            <param name="delta" value="0.1"/>
+            <param name="llsamplerange" value="0.01"/>
+            <param name="llsamplestep" value="0.01"/>
+            <param name="lasamplerange" value="0.005"/>
+            <param name="lasamplestep" value="0.005"/>
+            <param name="minimumScore" value="0.005"/>        
+    </node>
+    
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" ns="$(arg robot_name_2)" output="screen">
+            <param name="base_local_planner" value="base_local_planner/TrajectoryPlannerROS"/>        
+            <rosparam file="$(find armbot_nav)/config/multi/costmap_common_params_armbot.yaml" command="load" ns="global_costmap" /> 
+            <rosparam file="$(find armbot_nav)/config/multi/costmap_common_params_armbot.yaml" command="load" ns="local_costmap" />
+            <rosparam file="$(find armbot_nav)/config/multi/local_costmap_params_$(arg robot_name_2).yaml" command="load" />
+            <rosparam file="$(find armbot_nav)/config/multi/global_costmap_params_$(arg robot_name_2).yaml" command="load" /> 
+            <rosparam file="$(find armbot_nav)/config/multi/base_local_planner_params_$(arg robot_name_2).yaml" command="load" />
+            <remap from="cmd_vel" to="/$(arg robot_name_2)/mobile_base_controller/cmd_vel"/>
+            <remap from="robot_base_frame" to="$(arg robot_name_2)/base_link"/>
+    </node>
+  <!-- </group> -->
+
+  <node pkg="tf" type="static_transform_publisher" name="world_to_mergedmap_tf_broadcaster"  args="0.385 0.385 0 0 0 0 world map 20"/>
+  <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg robot_name_0)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg robot_name_0)/map 20"/>
+  <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg robot_name_1)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg robot_name_1)/map 20"/>
+  <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg robot_name_2)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg robot_name_2)/map 20"/>
+
+  <!-- RViz -->
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find armbot_nav)/rviz/armbot_customized_nav.rviz" />
+
+  <!-- <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
+    <param name="default_topic" value="$(arg cmd_vel)"/>
+  </node> -->
+
+</launch>
