@@ -284,7 +284,7 @@
   <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg robot_name_2)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg robot_name_2)/map 20"/>
 
   <!-- RViz -->
-  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find armbot_nav)/rviz/armbot_customized_nav.rviz" />
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find armbot_nav)/rviz/multi_armbot_nav.rviz" />
 
   <!-- <node name="rqt_robot_steering" pkg="rqt_robot_steering" type="rqt_robot_steering">
     <param name="default_topic" value="$(arg cmd_vel)"/>
