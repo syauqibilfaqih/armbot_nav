@@ -3,7 +3,7 @@
 
   <!-- Arguments -->
   <arg name="robot_name" value="armbot"/>
-  <arg name="robot_name_0" value="armbot0"/>
+  <arg name="robot_name_0" value="armbot1"/>
   <arg name="model" default="$(find armbot_nav)/urdf/armbot/armbot_custom.urdf.xacro"/>
   <arg name="cmd_vel" default="/$(arg robot_name_0)/mobile_base_controller/cmd_vel"/>
   <arg name="world" default="small_house1"/>
