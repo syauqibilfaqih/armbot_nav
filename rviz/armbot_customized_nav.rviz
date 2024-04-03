@@ -26,7 +26,8 @@ Panels:
     SyncMode: 0
     SyncSource: LaserScan
   - Class: rviz/Tool Properties
-    Expanded: ~
+    Expanded:
+      - /2D Nav Goal1
     Name: Tool Properties
     Splitter Ratio: 0.5
 Preferences:
@@ -99,8 +100,8 @@ Visualization Manager:
           Show Trail: false
           Value: true
       Name: RobotModel
-      Robot Description: /armbot0/robot_description
-      TF Prefix: armbot0
+      Robot Description: /armbot1/robot_description
+      TF Prefix: armbot1
       Update Interval: 0
       Value: true
       Visual Enabled: true
@@ -172,7 +173,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.05000000074505806
       Style: Flat Squares
-      Topic: /armbot0/armbot_laser_scanner/laser/scan
+      Topic: /armbot1/armbot_laser_scanner/laser/scan
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -253,7 +254,7 @@ Visualization Manager:
       Enabled: true
       Name: Polygon
       Queue Size: 10
-      Topic: armbot0/move_base/global_costmap/footprint
+      Topic: armbot1/move_base/global_costmap/footprint
       Unreliable: false
       Value: true
     - Alpha: 0.699999988079071
@@ -262,7 +263,7 @@ Visualization Manager:
       Draw Behind: false
       Enabled: true
       Name: Map
-      Topic: /armbot0/move_base/global_costmap/costmap
+      Topic: /armbot1/move_base/global_costmap/costmap
       Unreliable: false
       Use Timestamp: false
       Value: true
@@ -272,7 +273,7 @@ Visualization Manager:
       Draw Behind: false
       Enabled: true
       Name: Map
-      Topic: /armbot0/move_base/local_costmap/costmap
+      Topic: /armbot1/move_base/local_costmap/costmap
       Unreliable: false
       Use Timestamp: false
       Value: true
@@ -289,7 +290,7 @@ Visualization Manager:
       Shaft Length: 1
       Shaft Radius: 0.05000000074505806
       Shape: Arrow
-      Topic: /armbot0/move_base_simple/goal
+      Topic: /armbot1/move_base_simple/goal
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -313,7 +314,7 @@ Visualization Manager:
       Radius: 0.029999999329447746
       Shaft Diameter: 0.10000000149011612
       Shaft Length: 0.10000000149011612
-      Topic: /armbot0/move_base/TrajectoryPlannerROS/global_plan
+      Topic: /armbot1/move_base/TrajectoryPlannerROS/global_plan
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -337,7 +338,7 @@ Visualization Manager:
       Radius: 0.029999999329447746
       Shaft Diameter: 0.10000000149011612
       Shaft Length: 0.10000000149011612
-      Topic: /armbot0/move_base/TrajectoryPlannerROS/local_plan
+      Topic: /armbot1/move_base/TrajectoryPlannerROS/local_plan
       Unreliable: false
       Value: true
     - Alpha: 1
@@ -361,7 +362,7 @@ Visualization Manager:
       Radius: 0.029999999329447746
       Shaft Diameter: 0.10000000149011612
       Shaft Length: 0.10000000149011612
-      Topic: /armbot0/move_base/NavfnROS/plan
+      Topic: /armbot1/move_base/NavfnROS/plan
       Unreliable: false
       Value: true
     - Class: rviz/Marker
@@ -419,7 +420,7 @@ Visualization Manager:
       X std deviation: 0.5
       Y std deviation: 0.5
     - Class: rviz/SetGoal
-      Topic: armbot0/move_base_simple/goal
+      Topic: armbot1/move_base_simple/goal
     - Class: rviz/PublishPoint
       Single click: true
       Topic: /clicked_point
