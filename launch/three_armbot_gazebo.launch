@@ -3,7 +3,7 @@
 
   <!-- Arguments -->
   <arg name="robot_name" value="armbot"/>
-  <arg name="robot_name_0" value="armbot0"/>
+  <arg name="robot_name_0" value="armbot3"/>
   <arg name="robot_name_1" value="armbot1"/>
   <arg name="robot_name_2" value="armbot2"/>
 
