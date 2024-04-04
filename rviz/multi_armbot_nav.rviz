@@ -14,7 +14,8 @@ Panels:
     Name: Tool Properties
     Splitter Ratio: 0.5886790156364441
   - Class: rviz/Views
-    Expanded: ~
+    Expanded:
+      - /Current View1
     Name: Views
     Splitter Ratio: 0.5
   - Class: rviz/Time
@@ -97,8 +98,8 @@ Visualization Manager:
           Show Trail: false
           Value: true
       Name: RobotModel
-      Robot Description: /armbot0/robot_description
-      TF Prefix: armbot0
+      Robot Description: /armbot3/robot_description
+      TF Prefix: armbot3
       Update Interval: 0
       Value: true
       Visual Enabled: true
@@ -270,7 +271,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.05000000074505806
       Style: Flat Squares
-      Topic: /armbot0/armbot_laser_scanner/laser/scan
+      Topic: /armbot3/armbot_laser_scanner/laser/scan
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -416,7 +417,7 @@ Visualization Manager:
       Draw Behind: false
       Enabled: true
       Name: Map
-      Topic: /armbot0/move_base/global_costmap/costmap
+      Topic: /armbot3/move_base/global_costmap/costmap
       Unreliable: false
       Use Timestamp: false
       Value: true
@@ -426,7 +427,7 @@ Visualization Manager:
       Draw Behind: false
       Enabled: true
       Name: Map
-      Topic: /armbot0/move_base/local_costmap/costmap
+      Topic: /armbot3/move_base/local_costmap/costmap
       Unreliable: false
       Use Timestamp: false
       Value: true
