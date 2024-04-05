@@ -35,13 +35,13 @@
     <arg name="world_name" value="$(find armbot_nav)/worlds/$(arg world).world"/>
   </include>
 
-  <!-- armbot0 -->
+  <!-- armbot3 -->
   <!-- <group ns = "$(arg robot_name)"> -->
     <!--Spawns Robot inside a Gazebo simulation -->
     <param name="/$(arg robot_name_0)/robot_description"
           command="xacro $(arg model) botname:=$(arg robot_name_0)"/>
     <node pkg="gazebo_ros" type="spawn_model" name="spawn_$(arg robot_name_0)" 
-          args="-x 0.0 -y 0.5 -z 0.1 -unpause -urdf -param /$(arg robot_name_0)/robot_description -model $(arg robot_name_0)" respawn="false">
+          args="-x 0.0 -y 0.5 -z 0.1 -Y 0.0 -unpause -urdf -param /$(arg robot_name_0)/robot_description -model $(arg robot_name_0)" respawn="false">
     </node>
 
     <!--Spawns Controller inside a Gazebo simulation -->
@@ -122,7 +122,7 @@
     <param name="/$(arg robot_name_1)/robot_description"
           command="xacro $(arg model) botname:=$(arg robot_name_1)"/>
     <node pkg="gazebo_ros" type="spawn_model" name="spawn_$(arg robot_name_1)" 
-          args="-x 6.0 -y -1.0 -z 0.1 -unpause -urdf -param /$(arg robot_name_1)/robot_description -model $(arg robot_name_1)" respawn="false">
+          args="-x 6.0 -y -1.0 -z 0.1 -Y 0.0 -unpause -urdf -param /$(arg robot_name_1)/robot_description -model $(arg robot_name_1)" respawn="false">
     </node>
 
     <!--Spawns Controller inside a Gazebo simulation -->
@@ -203,7 +203,7 @@
     <param name="/$(arg robot_name_2)/robot_description"
           command="xacro $(arg model) botname:=$(arg robot_name_2)"/>
     <node pkg="gazebo_ros" type="spawn_model" name="spawn_$(arg robot_name_2)" 
-          args="-x -6.5 -y -1.0 -z 0.1 -unpause -urdf -param /$(arg robot_name_2)/robot_description -model $(arg robot_name_2)" respawn="false">
+          args="-x -6.5 -y -1.0 -z 0.1 -Y 0.0 -unpause -urdf -param /$(arg robot_name_2)/robot_description -model $(arg robot_name_2)" respawn="false">
     </node>
 
     <!--Spawns Controller inside a Gazebo simulation -->
@@ -314,10 +314,10 @@
   </node>
 
   <node pkg="tf" type="static_transform_publisher" name="world_to_mergedmap_tf_broadcaster"  args="0.385 0.385 0 0 0 0 world map 20"/>
-  <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg robot_name_0)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg robot_name_0)/map 20"/>
   <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg robot_name_1)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg robot_name_1)/map 20"/>
+  <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg robot_name_0)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg robot_name_0)/map 20"/>
   <node pkg="tf" type="static_transform_publisher" name="world_to_$(arg robot_name_2)_tf_broadcaster"  args="0 0 0 0 0 0 /map /$(arg robot_name_2)/map 20"/>
-
+  
   <!-- RViz -->
   <node type="rviz" name="rviz" pkg="rviz" args="-d $(find armbot_nav)/rviz/multi_armbot_nav.rviz" />
 
